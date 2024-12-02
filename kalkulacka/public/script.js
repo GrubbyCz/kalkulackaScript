@@ -134,10 +134,54 @@ function toggleSign() {
   updateDisplay();
 }
 
+function updateDisplay() {
+  const maxLength = 15; // Maximální počet znaků na displeji
+  let displayText = currentNumber;
+
+  // Zkrátit číslo, pokud přesahuje maximální délku
+  if (displayText.length > maxLength) {
+    displayText = displayText.slice(0, maxLength) + "...";
+  }
+
+  document.getElementById("display").textContent = displayText;
+}
+
 // Aktualizace statistik na stránce
 function updateStats() {
-  const statsElement = document.getElementById("stats");
-  statsElement.textContent = JSON.stringify(stats, null, 2);
+  const statsTableBody = document.querySelector("#stats-table tbody");
+  statsTableBody.innerHTML = ""; // Vymaže starý obsah
+
+  // Pro každý klíč (číslo) v objektu stats vytvoří řádek
+  for (const number in stats) {
+    const row = document.createElement("tr");
+
+    const numberCell = document.createElement("td");
+    numberCell.textContent = number;
+    row.appendChild(numberCell);
+
+    const countCell = document.createElement("td");
+    countCell.textContent = stats[number];
+    row.appendChild(countCell);
+
+    statsTableBody.appendChild(row);
+  }
+}
+
+async function loadStats() {
+  const response = await fetch('/stats');
+  stats = await response.json();
+  updateStats();
+}
+
+// Uložit statistiky do JSON souboru
+async function saveStats() {
+  await fetch('/stats', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(stats),
+  });
 }
 
 // Načtení statistik při prvním načtení
