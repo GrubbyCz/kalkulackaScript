@@ -53,6 +53,7 @@ function appendNumber(num) {
   updateDisplay();
 }
 
+
 function appendDot() {
   if (!currentNumber.includes(".")) {
     currentNumber += ".";
@@ -78,13 +79,19 @@ function backspace() {
 }
 
 function operate(op) {
-  if (currentNumber === "") return;
-  if (previousNumber !== null) {
-    calculate();
+  if (operator && currentNumber === "0") {
+    // Pokud již existuje operátor a aktuální číslo není zadáno, pouze aktualizujeme operátor
+    operator = op;
+    return;
   }
-  previousNumber = currentNumber;
-  currentNumber = "0";
-  operator = op;
+
+  if (previousNumber !== null) {
+    calculate(); // Vypočítej, pokud už byla nastavena předchozí hodnota
+  }
+
+  previousNumber = currentNumber; // Ulož aktuální číslo jako předchozí
+  currentNumber = "0"; // Resetuj aktuální číslo
+  operator = op; // Nastav nový operátor
 }
 
 function calculate() {
